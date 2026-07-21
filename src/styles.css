@@ -312,6 +312,74 @@ a { color: inherit; }
 .footer p { font-size: 12.5px; line-height: 1.55; margin: 0 0 6px; }
 .footer-tiny { font-size: 11.5px; opacity: 0.8; }
 
+/* ---------- Greeter (Vita) ---------- */
+.greeter { position: fixed; right: 22px; bottom: 22px; z-index: 60; }
+.greeter-card {
+  display: flex; align-items: flex-end; gap: 12px;
+  width: 360px; max-width: calc(100vw - 44px);
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 18px; padding: 14px 16px 14px 12px;
+  box-shadow: var(--shadow-lg);
+  animation: greeter-pop .45s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+.greeter-figure { flex: 0 0 84px; width: 84px; }
+.greeter-avatar { width: 100%; height: auto; display: block; animation: greeter-float 3.6s ease-in-out infinite; }
+.greeter-body { min-width: 0; }
+.greeter-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 4px; }
+.greeter-name { font-size: 13px; font-weight: 700; letter-spacing: -0.01em; }
+.greeter-role { font-weight: 500; color: var(--ink-3); }
+.greeter-actions { display: flex; gap: 4px; }
+.greeter-btn {
+  border: none; background: transparent; cursor: pointer;
+  font-size: 13px; line-height: 1; color: var(--ink-3);
+  padding: 4px 6px; border-radius: 8px;
+}
+.greeter-btn:hover { background: var(--green-soft); color: var(--green-ink); }
+.greeter-btn.active { color: var(--green-ink); }
+.greeter-text { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--ink-2); min-height: 3em; }
+.greeter-caret {
+  display: inline-block; width: 2px; height: 0.95em; margin-left: 2px;
+  background: var(--green); vertical-align: text-bottom;
+  animation: greeter-caret 0.8s steps(1) infinite;
+}
+.greeter-min {
+  width: 60px; height: 60px; padding: 6px;
+  border: 1px solid var(--line); border-radius: 50%;
+  background: var(--surface); box-shadow: var(--shadow-md);
+  cursor: pointer;
+}
+.greeter-min:hover { box-shadow: var(--shadow-lg); }
+.greeter-min .greeter-avatar { animation: greeter-float 3.6s ease-in-out infinite; }
+
+/* avatar internals */
+.greeter-bulb { fill: #cfe2d7; transition: fill .25s ease; }
+.greeter-bulb.on { fill: var(--green-bright); animation: greeter-glow 0.7s ease-in-out infinite alternate; }
+.greeter-eye { transform-box: fill-box; transform-origin: center; animation: greeter-blink 4.6s infinite; }
+.greeter-eye.eye-2 { animation-delay: 0.05s; }
+.greeter-brow { opacity: 0; transition: opacity .2s ease; }
+.mood-concerned .greeter-brow { opacity: 1; }
+.greeter-mouth-talk { transform-box: fill-box; transform-origin: center; animation: greeter-talk 0.26s ease-in-out infinite alternate; }
+.greeter-arm { transform-box: fill-box; transform-origin: 12% 50%; }
+.greeter-arm.wave { animation: greeter-wave 1.7s ease-in-out; }
+
+@keyframes greeter-pop { from { opacity: 0; transform: translateY(18px) scale(0.9); } to { opacity: 1; transform: none; } }
+@keyframes greeter-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes greeter-blink { 0%, 91%, 100% { transform: scaleY(1); } 94% { transform: scaleY(0.08); } }
+@keyframes greeter-talk { from { transform: scaleY(0.35); } to { transform: scaleY(1); } }
+@keyframes greeter-caret { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+@keyframes greeter-glow { from { opacity: 0.65; } to { opacity: 1; } }
+@keyframes greeter-wave {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-38deg); }
+  40% { transform: rotate(-10deg); }
+  60% { transform: rotate(-38deg); }
+  80% { transform: rotate(-6deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .greeter, .greeter * { animation: none !important; }
+}
+
 /* ---------- Responsive ---------- */
 @media (max-width: 940px) {
   .stage-wrap { grid-template-columns: 1fr; }
@@ -325,4 +393,7 @@ a { color: inherit; }
   .figure { width: 70%; }
   .refs-inner, .detail-card { padding: 20px; }
   .teams-stats { grid-template-columns: 1fr 1fr; }
+  .greeter { right: 12px; bottom: 12px; }
+  .greeter-card { max-width: calc(100vw - 24px); }
+  .greeter-figure { flex-basis: 64px; width: 64px; }
 }

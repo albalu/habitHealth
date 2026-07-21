@@ -7,6 +7,7 @@ import DetailPanel from './components/DetailPanel.jsx'
 import SystemBars from './components/SystemBars.jsx'
 import ScoreDial from './components/ScoreDial.jsx'
 import ReferencesSection from './components/ReferencesSection.jsx'
+import Greeter from './components/Greeter.jsx'
 
 const ALL_GOOD = Object.fromEntries(DIMENSIONS.map((d) => [d.id, 'good']))
 
@@ -149,6 +150,8 @@ export default function App() {
         </p>
         <p className="footer-tiny">Built as an open demo · every figure links to its primary source.</p>
       </footer>
+
+      <Greeter state={state} scores={scores} overall={overall} healthy={healthy} />
     </div>
   )
 }
