@@ -103,11 +103,15 @@ export function parseCommand(raw) {
     return { type: 'optimize' }
   if (has('reset', 'baseline') || t.includes(' start over ')) return { type: 'reset' }
   if (has('quit') && has('smoking', 'smoke')) return { type: 'set', dim: 'smoking', face: 'good' }
-  if (has('swap', 'flip', 'toggle', 'switch', 'turn', 'change', 'fix')) {
+  if (has('swap', 'flip', 'toggle', 'switch', 'turn', 'change', 'fix', 'replace', 'improve', 'upgrade')) {
+    // A specific habit named? Swap that one.
     for (const [dim, words] of Object.entries(HABIT_WORDS)) {
       if (has(...words)) return { type: 'swap', dim }
     }
+    // No habit named ("replace a bad habit", "fix something") — pick one at random.
+    if (has('habit', 'something', 'one', 'anything', 'random')) return { type: 'improve' }
   }
+  if (t.includes(' surprise me ')) return { type: 'improve' }
   if (has('show', 'highlight', 'select', 'view', 'focus')) {
     for (const [system, words] of Object.entries(SYSTEM_WORDS)) {
       if (has(...words)) return { type: 'show', system }

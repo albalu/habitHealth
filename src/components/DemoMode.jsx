@@ -16,6 +16,7 @@ export default function DemoMode({ state, setState, selectSystem, announce, onEx
   const [listening, setListening] = useState(false)
   const [supported, setSupported] = useState(true)
   const [heard, setHeard] = useState('')
+  const [showHelp, setShowHelp] = useState(true)
 
   const stepRef = useRef(step)
   stepRef.current = step
@@ -71,6 +72,16 @@ export default function DemoMode({ state, setState, selectSystem, announce, onEx
       case 'swap':
         setState((s) => ({ ...s, [cmd.dim]: s[cmd.dim] === 'good' ? 'bad' : 'good' }))
         break
+      case 'improve': {
+        const bad = DIMENSIONS.filter((d) => stateRef.current[d.id] === 'bad')
+        if (!bad.length) {
+          announce('Every habit is already on the healthy setting — nothing left to fix!', 'celebrate')
+        } else {
+          const pick = bad[Math.floor(Math.random() * bad.length)]
+          setState((s) => ({ ...s, [pick.id]: 'good' }))
+        }
+        break
+      }
       case 'show': {
         selectSystem(cmd.system)
         const sys = SYSTEMS.find((s) => s.id === cmd.system)
@@ -114,7 +125,7 @@ export default function DemoMode({ state, setState, selectSystem, announce, onEx
       }
       try { rec.start() } catch { /* ignore */ }
       announce(
-        'Demo mode is on. Say "start the tour" for the full leadership walkthrough, or drive it yourself — "next", "back", "optimize all", "quit smoking", "show the heart". Arrow keys work too.',
+        'Demo mode is on. Say "start the tour" for the full leadership walkthrough, or drive it yourself — "next", "back", "optimize all", "replace a bad habit", "show the heart". Arrow keys work too.',
         'happy'
       )
     }
@@ -139,7 +150,26 @@ export default function DemoMode({ state, setState, selectSystem, announce, onEx
   }, [onExit])
 
   return (
-    <div className="demo-hud" role="toolbar" aria-label="Demo mode controls">
+    <>
+      {showHelp && (
+        <div className="demo-help" role="note" aria-label="Voice commands">
+          <div className="demo-help-head">
+            <span>{supported ? 'Voice commands' : 'Voice commands (unavailable here — use arrow keys or the ◀ ▶ buttons)'}</span>
+            <button className="demo-help-close" onClick={() => setShowHelp(false)} aria-label="Hide voice commands">✕</button>
+          </div>
+          <ul>
+            <li><b>“start the tour”</b> — scripted leadership walkthrough</li>
+            <li><b>“next”</b> / <b>“back”</b> — step through it (or use ← → keys)</li>
+            <li><b>“replace a bad habit”</b> — randomly fix one unhealthy habit</li>
+            <li><b>“flip movement”</b>, <b>“quit smoking”</b>… — swap a specific habit</li>
+            <li><b>“optimize all”</b> / <b>“reset”</b> — best case / starting mix</li>
+            <li><b>“show the heart”</b> (brain, lungs…) — highlight an organ</li>
+            <li><b>“exit demo”</b> — leave demo mode (or press Esc)</li>
+          </ul>
+          <p className="demo-help-note">Speak after Vita finishes talking — she ignores commands while narrating.</p>
+        </div>
+      )}
+      <div className="demo-hud" role="toolbar" aria-label="Demo mode controls">
       <span className={`demo-mic${listening ? ' live' : ''}`} aria-hidden>🎤</span>
       <div className="demo-info">
         <span className="demo-title">Leadership demo</span>
@@ -155,8 +185,15 @@ export default function DemoMode({ state, setState, selectSystem, announce, onEx
         <button onClick={() => handleCommand('previous')} disabled={step <= 0} aria-label="Previous step">◀</button>
         <span className="demo-step">{step < 0 ? '—' : `${step + 1}/${TOUR.length}`}</span>
         <button onClick={() => handleCommand('next')} aria-label="Next step">▶</button>
+        <button
+          onClick={() => setShowHelp((h) => !h)}
+          aria-label="Show voice commands"
+          aria-expanded={showHelp}
+          className={showHelp ? 'demo-help-toggle on' : 'demo-help-toggle'}
+        >?</button>
         <button className="demo-exit" onClick={onExit} aria-label="Exit demo mode">✕</button>
       </div>
-    </div>
+      </div>
+    </>
   )
 }
