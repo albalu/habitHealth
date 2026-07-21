@@ -96,8 +96,9 @@ export function parseCommand(raw) {
     return { type: 'exit' }
   if (has('start', 'begin', 'restart', 'launch', 'play', 'run') && has('tour', 'demo', 'walkthrough', 'over'))
     return { type: 'start' }
-  if (has('next', 'continue', 'forward', 'proceed', 'go')) return { type: 'next' }
   if (has('back', 'previous', 'rewind')) return { type: 'prev' }
+  if (has('next', 'continue', 'forward', 'proceed') || t.includes(' go on ') || t.includes(' keep going '))
+    return { type: 'next' }
   if (has('optimize', 'optimise') || t.includes(' all green ') || t.includes(' best case ') || t.includes(' all healthy '))
     return { type: 'optimize' }
   if (has('reset', 'baseline') || t.includes(' start over ')) return { type: 'reset' }
