@@ -141,7 +141,7 @@ function Avatar({ talking, mood, waving }) {
   )
 }
 
-export default function Greeter({ state, scores, overall, healthy }) {
+export default function Greeter({ state, scores, overall, healthy, announcement, demoActive }) {
   const [message, setMessage] = useState('')
   const [shown, setShown] = useState('')
   const [mood, setMood] = useState('happy')
@@ -180,6 +180,15 @@ export default function Greeter({ state, scores, overall, healthy }) {
     if (reaction.mood === 'celebrate') wave()
   }, [state, scores, overall, healthy])
 
+  // Scripted narration (demo mode) overrides the automatic reaction above —
+  // this effect is declared after it, so in a shared commit it wins.
+  useEffect(() => {
+    if (!announcement) return
+    setMood(announcement.mood ?? 'happy')
+    setMessage(announcement.text)
+    setMinimized(false)
+  }, [announcement])
+
   // Typewriter reveal; the mouth animates while text is still arriving.
   useEffect(() => {
     if (!message) return
@@ -195,16 +204,17 @@ export default function Greeter({ state, scores, overall, healthy }) {
     return () => clearInterval(id)
   }, [message])
 
-  // Optional voice — browser speech synthesis, only after the user turns it on.
+  // Optional voice — browser speech synthesis. On when the user enables it,
+  // and always on during demo mode so the walkthrough is narrated aloud.
   useEffect(() => {
-    if (!voiceOn || !message || !('speechSynthesis' in window)) return
+    if ((!voiceOn && !demoActive) || !message || !('speechSynthesis' in window)) return
     const u = new SpeechSynthesisUtterance(message)
     u.rate = 1.03
     u.pitch = 1.05
     window.speechSynthesis.cancel()
     window.speechSynthesis.speak(u)
     return () => window.speechSynthesis.cancel()
-  }, [message, voiceOn])
+  }, [message, voiceOn, demoActive])
 
   const toggleVoice = () => {
     setVoiceOn((on) => {

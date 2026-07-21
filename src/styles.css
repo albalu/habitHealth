@@ -380,11 +380,44 @@ a { color: inherit; }
   .greeter, .greeter * { animation: none !important; }
 }
 
+/* ---------- Demo mode (voice-controlled walkthrough) ---------- */
+.demo-toggle { font: inherit; font-weight: 550; background: transparent; cursor: pointer; }
+.demo-hud {
+  position: fixed; left: 50%; transform: translateX(-50%); bottom: 22px; z-index: 70;
+  display: flex; align-items: center; gap: 14px;
+  background: rgba(14, 28, 24, 0.94); color: #eaf3ee;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px; padding: 10px 12px 10px 18px;
+  box-shadow: var(--shadow-lg); backdrop-filter: blur(6px);
+  animation: greeter-pop .4s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+.demo-mic { font-size: 18px; opacity: 0.4; }
+.demo-mic.live { opacity: 1; animation: demo-pulse 1.6s ease-in-out infinite; }
+.demo-info { display: flex; flex-direction: column; line-height: 1.3; min-width: 0; }
+.demo-title { font-size: 12.5px; font-weight: 700; letter-spacing: 0.01em; }
+.demo-hint {
+  font-size: 11.5px; color: #a9bcb2; max-width: 320px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.demo-nav { display: flex; align-items: center; gap: 6px; }
+.demo-nav button {
+  border: none; cursor: pointer; width: 30px; height: 30px;
+  border-radius: 999px; background: rgba(255, 255, 255, 0.1);
+  color: #eaf3ee; font-size: 12px; line-height: 1;
+}
+.demo-nav button:hover:not(:disabled) { background: rgba(255, 255, 255, 0.22); }
+.demo-nav button:disabled { opacity: 0.35; cursor: default; }
+.demo-step { font-size: 11.5px; color: #a9bcb2; min-width: 34px; text-align: center; font-variant-numeric: tabular-nums; }
+@keyframes demo-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+
 /* ---------- Responsive ---------- */
 @media (max-width: 940px) {
   .stage-wrap { grid-template-columns: 1fr; }
   .stage { position: relative; top: 0; }
   .teams-inner { grid-template-columns: 1fr; gap: 24px; padding: 30px; }
+  .demo-on .greeter { bottom: 84px; }
+  .demo-hud { max-width: calc(100vw - 24px); gap: 10px; }
+  .demo-hint { max-width: 40vw; }
 }
 @media (max-width: 560px) {
   .page { padding: 0 16px; }

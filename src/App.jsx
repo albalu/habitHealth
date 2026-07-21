@@ -8,6 +8,7 @@ import SystemBars from './components/SystemBars.jsx'
 import ScoreDial from './components/ScoreDial.jsx'
 import ReferencesSection from './components/ReferencesSection.jsx'
 import Greeter from './components/Greeter.jsx'
+import DemoMode from './components/DemoMode.jsx'
 
 const ALL_GOOD = Object.fromEntries(DIMENSIONS.map((d) => [d.id, 'good']))
 
@@ -15,6 +16,14 @@ export default function App() {
   const [state, setState] = useState(DEFAULT_STATE)
   const [selected, setSelected] = useState(null) // { type:'habit'|'system', id }
   const [hoverHabit, setHoverHabit] = useState(null)
+  const [demo, setDemo] = useState(false)
+  const [announcement, setAnnouncement] = useState(null) // scripted line for Vita
+
+  const announce = (text, mood = 'happy') => setAnnouncement({ text, mood })
+  const exitDemo = () => {
+    setDemo(false)
+    announce('Demo mode off — back to free exploration.')
+  }
 
   const scores = useMemo(() => computeScores(state), [state])
   const overall = overallScore(scores)
@@ -35,7 +44,7 @@ export default function App() {
   const selectedSystem = selected?.type === 'system' ? selected.id : null
 
   return (
-    <div className="page">
+    <div className={demo ? 'page demo-on' : 'page'}>
       <header className="topbar">
         <div className="brand">
           <span className="brand-mark" aria-hidden>💚</span>
@@ -46,6 +55,9 @@ export default function App() {
         </div>
         <nav className="topnav">
           <a href="#references">Evidence</a>
+          <button className="btn-ghost demo-toggle" onClick={() => (demo ? exitDemo() : setDemo(true))}>
+            {demo ? '✕ Exit demo' : '🎤 Demo'}
+          </button>
           <a href="#teams" className="btn-ghost">For teams</a>
         </nav>
       </header>
@@ -151,7 +163,23 @@ export default function App() {
         <p className="footer-tiny">Built as an open demo · every figure links to its primary source.</p>
       </footer>
 
-      <Greeter state={state} scores={scores} overall={overall} healthy={healthy} />
+      <Greeter
+        state={state}
+        scores={scores}
+        overall={overall}
+        healthy={healthy}
+        announcement={announcement}
+        demoActive={demo}
+      />
+      {demo && (
+        <DemoMode
+          state={state}
+          setState={setState}
+          selectSystem={selectSystem}
+          announce={announce}
+          onExit={exitDemo}
+        />
+      )}
     </div>
   )
 }
